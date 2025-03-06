@@ -2,10 +2,13 @@ import { useState,useEffect } from 'react'
 
 import './App.css'
 import Map from './components/Map'
+import Submit from './components/Submit'
+
 
 function App() {
   // const [count, setCount] = useState(0)
   const [position, setPosition] = useState({lat:-37.8136,lon: 144.9631})
+  const [selectedPos, setSelectedPos] = useState(null)
   const [spaces,setSpaces] = useState([])
    
 
@@ -28,7 +31,8 @@ function App() {
 
     <div>
       <h1>Welcome</h1>
-      <Map pos={position} spaces={spaces}/>
+      <Submit default_pos={position} selectedPos={selectedPos}/>
+      <Map pos={position} spaces={spaces} selectedPos={selectedPos} setSelectedPos={setSelectedPos}/>
     </div>
 
   )
