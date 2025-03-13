@@ -38,13 +38,15 @@ function App() {
   }
   return (
 
-    <div>
-      <h1>Welcome</h1>
-      <div>
+    <div class="flex flex-row">
+
+      <div class="basis-1/4">
         <Submit default_pos={position} selectedPos={selectedPos}/>
         <List spaces={spaces} setSelectedPos={setSelectedPos}/>
       </div>
-      <Map pos={position} spaces={spaces} selectedPos={selectedPos} setSelectedPos={setSelectedPos}/>
+      <div class="basis-3/4">
+        <Map pos={position} spaces={spaces} selectedPos={selectedPos} setSelectedPos={setSelectedPos}/>
+      </div>
     </div>
 
   )

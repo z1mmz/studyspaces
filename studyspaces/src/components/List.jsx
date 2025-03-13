@@ -16,6 +16,7 @@ const List = ({spaces, setSelectedPos}) => {
         spaces ? 
         <div>
             <ul>
+         
                 {items}
             </ul>
         </div>
