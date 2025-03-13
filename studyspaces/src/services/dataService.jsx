@@ -22,6 +22,21 @@ const addSpace = async (space) => {
         }
 }
 
+
+const getSpaces = async (Lat,Lon) => {
+  console.log()
+  const querySnapshot = await getDocs(collection(db, "spaces"));
+
+  // querySnapshot.forEach((doc) => {
+  //   // doc.data() is never undefined for query doc snapshots
+  //   console.log(doc.id, " => ", doc.data());
+  // });
+
+  return(querySnapshot.docs)
+}
+
+
 export default {
-    addSpace:addSpace
+    addSpace,
+    getSpaces
 }
