@@ -18,7 +18,7 @@ const Map = ({pos,spaces,selectedPos,setSelectedPos}) =>{
     //     pos = selectedPos
     // }
     const locations = spaces?.map((space,idx) =>  <Marker key={idx} position={[space.data().Lat, space.data().Lon]}><Popup>{space.data().Name}</Popup></Marker>)
-
+    
 
     return(
                 <div>
@@ -28,7 +28,7 @@ const Map = ({pos,spaces,selectedPos,setSelectedPos}) =>{
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    <FocusLocation pos={pos} />
+                    <FocusLocation pos={selectedPos ? selectedPos : pos} />
                     
                     <Marker position={[pos.lat, pos.lon]}>
                         <Popup>

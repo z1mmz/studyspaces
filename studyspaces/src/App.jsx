@@ -4,6 +4,7 @@ import './App.css'
 import Map from './components/Map'
 import Submit from './components/Submit'
 import dataService from './services/dataService'
+import List from './components/List'
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -39,7 +40,10 @@ function App() {
 
     <div>
       <h1>Welcome</h1>
-      <Submit default_pos={position} selectedPos={selectedPos}/>
+      <div>
+        <Submit default_pos={position} selectedPos={selectedPos}/>
+        <List spaces={spaces} setSelectedPos={setSelectedPos}/>
+      </div>
       <Map pos={position} spaces={spaces} selectedPos={selectedPos} setSelectedPos={setSelectedPos}/>
     </div>
 
