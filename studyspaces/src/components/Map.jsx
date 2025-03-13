@@ -1,17 +1,14 @@
 import { MapContainer, TileLayer, useMap,Marker,Popup} from 'react-leaflet'
 import { useEffect,useState} from 'react'
 import 'leaflet/dist/leaflet.css'
- const FocusLocation = ({pos,setSelectedPos}) => {
+ const FocusLocation = ({pos}) => {
     const map = useMap()
 
     if(pos){
         console.log(pos)
         map.flyTo([pos.lat,pos.lon],map.getZoom())
     }
-    map.on("click", function (e) {
-        alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng);
-        setSelectedPos({Lat:e.latlng.lat,Lon:e.latlng.lon})
-      });
+
 
   return null
 
@@ -28,10 +25,10 @@ const Map = ({pos,spaces,selectedPos,setSelectedPos}) =>{
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <FocusLocation pos={pos} setSelectedPos={setSelectedPos}/>
-                <Marker position={[51.505, -0.09]}>
+                <FocusLocation pos={pos} />
+                <Marker position={[pos.lat, pos.lon]}>
                     <Popup>
-                    A pretty CSS3 popup. <br /> Easily customizable.
+                        Current location <br/> {pos.lat},{pos.lon}.
                     </Popup>
                 </Marker>
                 </MapContainer>
