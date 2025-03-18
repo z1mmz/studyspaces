@@ -1,4 +1,5 @@
 import { useEffect,useState} from 'react'
+import { Form } from "radix-ui";
 import dataService from '../services/dataService'
 const Submit = ({default_pos,selectedPos}) =>{
     const [SpaceName, SetSpaceName] = useState("")
@@ -17,14 +18,18 @@ const Submit = ({default_pos,selectedPos}) =>{
         dataService.addSpace(space)
 
     }
+    const inputStyle ="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
     return (
-        <div>
-            Name: <input value={SpaceName} onChange={(e) => SetSpaceName(e.target.value)}></input>
-            Description: <input></input>
-            Address: <input></input>
-            Latitude: <input value={Lat} onChange={(e) => SetLat(e.target.value)}></input>, Longitude: <input value={Lon} onChange={(e) => SetLon(e.target.value)}></input>
-            <button onClick={()=>{handleSubmit()}}>Submit</button>
+        <div className='grid grid-cols-1 gap-2 p-5'>
+            <div className='row-span-1 col-span-1'>Name: <input className={inputStyle} value={SpaceName} onChange={(e) => SetSpaceName(e.target.value)}></input></div>
+            <div className='row-span-1 col-span-1'>Description: <input className={inputStyle}></input></div>
+            <div className='row-span-1 col-span-1'>Address: <input className={inputStyle}></input></div>
+            <div className='row-span-1 col-span-1'>Latitude: <input className={inputStyle} value={Lat} onChange={(e) => SetLat(e.target.value)}></input></div> 
+            <div className='row-span-1 col-span-1'>Longitude: <input className={inputStyle} value={Lon} onChange={(e) => SetLon(e.target.value)}></input></div>
+            <div className="row-span-1 col-span-1"><button className="rounded-lg bg-gray-50 border border border-gray-300 p-2.5" onClick={()=>{handleSubmit()}}>Submit</button></div>
         </div>
+
+
     )
 }
 export default Submit
