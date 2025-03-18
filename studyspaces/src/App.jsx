@@ -11,6 +11,7 @@ function App() {
   const [position, setPosition] = useState({lat:-37.8136,lon: 144.9631})
   const [selectedPos, setSelectedPos] = useState(null)
   const [spaces,setSpaces] = useState(null)
+  const [showForm,setShowForm] = useState(false)
    
 
   useEffect(() =>{
@@ -40,10 +41,13 @@ function App() {
 
     <div class="flex flex-row">
 
-      <div class="basis-1/4">
-        <Submit default_pos={position} selectedPos={selectedPos}/>
+      <div class="flex flex-col basis-1/4 max-h-screen">
+ 
+        {showForm? <Submit default_pos={position} selectedPos={selectedPos} setShowForm={setShowForm}/>: <button onClick={()=>(setShowForm(true))}>Add new space</button>}
+     
         <List spaces={spaces} setSelectedPos={setSelectedPos}/>
       </div>
+
       <div class="basis-3/4">
         <Map pos={position} spaces={spaces} selectedPos={selectedPos} setSelectedPos={setSelectedPos}/>
       </div>

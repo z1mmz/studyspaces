@@ -1,7 +1,6 @@
 import { useEffect,useState} from 'react'
-import { Form } from "radix-ui";
 import dataService from '../services/dataService'
-const Submit = ({default_pos,selectedPos}) =>{
+const Submit = ({default_pos,selectedPos,setShowForm}) =>{
     const [SpaceName, SetSpaceName] = useState("")
     const [description, SetDescription] = useState("")
     const [address, SetAddress] = useState("")
@@ -15,10 +14,17 @@ const Submit = ({default_pos,selectedPos}) =>{
         }
         console.log(SpaceName)
         console.log(space)
-        dataService.addSpace(space)
+        dataService.addSpace(space).then((e)=>{
+            if(e!= true){
+                alert(e)
+            }else{
+                alert("Sucessfully added: "+space.Name )
+            }
+            setShowForm(false)
+        })
 
     }
-    const inputStyle ="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+    const inputStyle ="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " 
     return (
         <div className='grid grid-cols-1 gap-2 p-5'>
             <div className='row-span-1 col-span-1'>Name: <input className={inputStyle} value={SpaceName} onChange={(e) => SetSpaceName(e.target.value)}></input></div>
