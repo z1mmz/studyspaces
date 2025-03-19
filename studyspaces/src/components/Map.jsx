@@ -30,7 +30,7 @@ const Map = ({pos,spaces,selectedPos,setSelectedPos}) =>{
 
     return(
                 <div>
-                    <MapContainer style={{ width: '100%', height: '100vh', position: "relative"}} center={[pos.lat,pos.lon]} zoom={13} scrollWheelZoom={false} onclick={(e) => console.log(e)}>
+                    <MapContainer style={{ width: '100%', height: '100vh', position: "relative"}} center={[pos.lat,pos.lon]} scrollWheelZoom={true} zoom={13} onclick={(e) => console.log(e)}>
                     
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
