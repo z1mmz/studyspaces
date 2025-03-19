@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, useMap,Marker,Popup} from 'react-leaflet'
+import { MapContainer, TileLayer, useMap,Marker,Popup,useMapEvents} from 'react-leaflet'
 import { useEffect,useState} from 'react'
 import 'leaflet/dist/leaflet.css'
  const FocusLocation = ({pos}) => {
@@ -13,6 +13,14 @@ import 'leaflet/dist/leaflet.css'
   return null
 
   }
+  const MapEvents = ({setSelectedPos}) => {
+    useMapEvents({
+      click(e) {
+        setSelectedPos({"lat":e.latlng.lat,"lon":e.latlng.lng})
+      },
+    });
+    return false;
+}
 const Map = ({pos,spaces,selectedPos,setSelectedPos}) =>{
     // if (selectedPos){
     //     pos = selectedPos
@@ -28,14 +36,14 @@ const Map = ({pos,spaces,selectedPos,setSelectedPos}) =>{
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    <FocusLocation pos={selectedPos ? selectedPos : pos} />
-                    
+                    {selectedPos?.lat? null:<FocusLocation pos={selectedPos ? selectedPos : pos} />}
+                    <MapEvents setSelectedPos={setSelectedPos}/>
                     <Marker position={[pos.lat, pos.lon]}>
                         <Popup>
                             Current location <br/> {pos.lat},{pos.lon}.
                         </Popup>
-        
                     </Marker>
+                    {selectedPos?.lat?  <Marker position={[selectedPos.lat, selectedPos.lon]}></Marker> : null}
                     {locations ? locations : null}
                     </MapContainer>
 

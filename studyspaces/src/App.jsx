@@ -37,13 +37,14 @@ function App() {
          })
       
   }
+
   return (
 
     <div class="flex flex-row">
 
       <div class="flex flex-col basis-1/4 max-h-screen">
  
-        {showForm? <Submit default_pos={position} selectedPos={selectedPos} setShowForm={setShowForm}/>: <button onClick={()=>(setShowForm(true))}>Add new space</button>}
+        {showForm? <Submit  selectedPos={selectedPos} setShowForm={setShowForm}/>: <button onClick={()=>(setShowForm(true))}>Add new space</button>}
      
         <List spaces={spaces} setSelectedPos={setSelectedPos}/>
       </div>
