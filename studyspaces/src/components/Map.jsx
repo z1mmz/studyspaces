@@ -36,7 +36,7 @@ const Map = ({pos,spaces,selectedPos,setSelectedPos}) =>{
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    {selectedPos?.lat? null:<FocusLocation pos={selectedPos ? selectedPos : pos} />}
+                    <FocusLocation pos={selectedPos ? selectedPos : pos} />
                     <MapEvents setSelectedPos={setSelectedPos}/>
                     <Marker position={[pos.lat, pos.lon]}>
                         <Popup>
