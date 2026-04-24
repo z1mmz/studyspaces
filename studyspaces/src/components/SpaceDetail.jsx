@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AMENITIES, DAYS, NOISE_LEVELS, isOpenNow, avgRating } from '../constants'
+import { submitDecision } from '../services/moderationService'
 
 const Stars = ({ rating, interactive, onRate }) => (
   <div className="flex gap-0.5">
@@ -16,7 +17,57 @@ const Stars = ({ rating, interactive, onRate }) => (
   </div>
 )
 
-const SpaceDetail = ({ space, onBack, onAddReview }) => {
+const CommunityReviewPanel = ({ space, session, onDecisionMade }) => {
+  const [acting, setActing] = useState(null)
+  const [done, setDone] = useState(false)
+
+  if (!session || done) return null
+
+  const myModeration = space.space_moderations?.find(
+    (m) => m.moderator_id === session.user.id
+  )
+  if (!myModeration || myModeration.decision !== null) return null
+
+  const act = async (decision) => {
+    setActing(decision)
+    try {
+      await submitDecision(space.id, decision)
+      setDone(true)
+      onDecisionMade?.()
+    } finally {
+      setActing(null)
+    }
+  }
+
+  return (
+    <div className="border-2 border-blue-200 rounded-xl p-4 bg-blue-50 flex flex-col gap-3">
+      <div>
+        <h3 className="font-semibold text-blue-900">You've been asked to review this space</h3>
+        <p className="text-xs text-blue-700 mt-0.5">
+          Your vote helps decide if it appears on the map for everyone.
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={() => act('approved')}
+          disabled={!!acting}
+          className="flex-1 py-2 text-sm font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 transition-colors"
+        >
+          {acting === 'approved' ? '…' : '✓ Approve'}
+        </button>
+        <button
+          onClick={() => act('rejected')}
+          disabled={!!acting}
+          className="flex-1 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+        >
+          {acting === 'rejected' ? '…' : '✗ Reject'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const SpaceDetail = ({ space, session, onBack, onAddReview, onDecisionMade }) => {
   const [photoIdx, setPhotoIdx] = useState(0)
   const [reviewForm, setReviewForm] = useState({ rating: 0, comment: '', author_name: '' })
   const [submitting, setSubmitting] = useState(false)
@@ -105,6 +156,9 @@ const SpaceDetail = ({ space, onBack, onAddReview }) => {
         {space.description && (
           <p className="text-sm text-gray-700 leading-relaxed">{space.description}</p>
         )}
+
+        {/* Community review panel — visible only to assigned reviewers */}
+        <CommunityReviewPanel space={space} session={session} onDecisionMade={onDecisionMade} />
 
         {/* Amenities */}
         {spaceAmenities.length > 0 && (

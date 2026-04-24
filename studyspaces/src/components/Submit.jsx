@@ -5,7 +5,7 @@ import dataService from '../services/dataService'
 const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400'
 const labelCls = 'block text-xs font-medium text-gray-600 mb-1'
 
-const Submit = ({ position, onSubmit, onCancel }) => {
+const Submit = ({ position, session, onSubmit, onCancel, onSignInClick }) => {
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -18,6 +18,7 @@ const Submit = ({ position, onSubmit, onCancel }) => {
   })
   const [hours, setHours] = useState(DEFAULT_HOURS)
   const [saving, setSaving] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState(null)
 
   const set = (key, value) => setForm((f) => ({ ...f, [key]: value }))
@@ -44,17 +45,20 @@ const Submit = ({ position, onSubmit, onCancel }) => {
     setError(null)
     try {
       const payload = {
-        name: form.name.trim(),
+        name:        form.name.trim(),
         description: form.description.trim() || null,
-        address: form.address.trim() || null,
-        lat: parseFloat(form.lat),
-        lon: parseFloat(form.lon),
+        address:     form.address.trim() || null,
+        lat:         parseFloat(form.lat),
+        lon:         parseFloat(form.lon),
         noise_level: form.noise_level,
-        amenities: form.amenities,
-        photos: form.photos.filter((p) => p.trim()),
+        amenities:   form.amenities,
+        photos:      form.photos.filter((p) => p.trim()),
         hours,
+        submitted_by: session.user.id,
+        status:       'pending',
       }
       const created = await dataService.addSpace(payload)
+      setSubmitted(true)
       onSubmit(created)
     } catch (err) {
       setError(err.message)
@@ -63,6 +67,46 @@ const Submit = ({ position, onSubmit, onCancel }) => {
     }
   }
 
+  // ── Success state ────────────────────────────────────────────
+  if (submitted) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 p-8 text-center h-full">
+        <span className="text-5xl">🎉</span>
+        <h2 className="text-lg font-bold text-gray-900">Space submitted!</h2>
+        <p className="text-sm text-gray-600 max-w-xs">
+          Thanks for contributing. Your space will appear on the map once 2 community members in the area approve it.
+        </p>
+        <button
+          onClick={onCancel}
+          className="mt-2 bg-blue-600 text-white rounded-xl px-6 py-2.5 font-medium hover:bg-blue-700 transition-colors"
+        >
+          Back to list
+        </button>
+      </div>
+    )
+  }
+
+  // ── Login gate ───────────────────────────────────────────────
+  if (!session) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 p-8 text-center h-full">
+        <span className="text-5xl">🔐</span>
+        <h2 className="text-lg font-bold text-gray-900">Sign in to contribute</h2>
+        <p className="text-sm text-gray-600 max-w-xs">
+          Create a free account to add study spaces, leave reviews, and help moderate new submissions.
+        </p>
+        <button
+          onClick={onSignInClick}
+          className="mt-2 bg-blue-600 text-white rounded-xl px-6 py-2.5 font-medium hover:bg-blue-700 transition-colors"
+        >
+          Sign in / Sign up
+        </button>
+        <button onClick={onCancel} className="text-sm text-gray-500 hover:underline">Cancel</button>
+      </div>
+    )
+  }
+
+  // ── Form ─────────────────────────────────────────────────────
   return (
     <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-5">
       <div className="flex items-center justify-between">

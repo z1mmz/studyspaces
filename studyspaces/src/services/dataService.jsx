@@ -40,9 +40,10 @@ const searchSpaces = async (query) => {
 }
 
 const addReview = async (review) => {
+  const { data: { user } } = await supabase.auth.getUser()
   const { data, error } = await supabase
     .from('reviews')
-    .insert([review])
+    .insert([{ ...review, user_id: user?.id ?? null }])
     .select()
     .single()
   if (error) throw error
