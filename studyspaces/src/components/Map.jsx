@@ -1,46 +1,57 @@
-import { MapContainer, TileLayer, useMap,Marker,Popup} from 'react-leaflet'
-import { useEffect,useState} from 'react'
+import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet'
+import { useEffect } from 'react'
+import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
- const FocusLocation = ({pos}) => {
-    const map = useMap()
 
-    if(pos){
-        console.log(pos)
-        map.flyTo([pos.lat,pos.lon],map.getZoom())
-    }
+const makeIcon = (color, size = 14) =>
+  L.divIcon({
+    html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.35)"></div>`,
+    className: '',
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+  })
 
+const userIcon = makeIcon('#22c55e', 16)
+const spaceIcon = makeIcon('#3b82f6', 14)
+const selectedIcon = makeIcon('#1d4ed8', 20)
 
+const FlyTo = ({ pos }) => {
+  const map = useMap()
+  useEffect(() => {
+    if (pos) map.flyTo([pos.lat, pos.lon], map.getZoom(), { duration: 0.8 })
+  }, [pos, map])
   return null
-
-  }
-const Map = ({pos,spaces,selectedPos,setSelectedPos}) =>{
-    // if (selectedPos){
-    //     pos = selectedPos
-    // }
-    const locations = spaces?.map((space,idx) =>  <Marker key={idx} position={[space.data().Lat, space.data().Lon]}><Popup>{space.data().Name}</Popup></Marker>)
-    
-
-    return(
-                <div>
-                    <MapContainer style={{ width: '100%', height: '100vh', position: "relative"}} center={[pos.lat,pos.lon]} zoom={13} scrollWheelZoom={false} onclick={(e) => console.log(e)}>
-                    
-                    <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <FocusLocation pos={selectedPos ? selectedPos : pos} />
-                    
-                    <Marker position={[pos.lat, pos.lon]}>
-                        <Popup>
-                            Current location <br/> {pos.lat},{pos.lon}.
-                        </Popup>
-        
-                    </Marker>
-                    {locations ? locations : null}
-                    </MapContainer>
-
-                </div>
-   
-    )
 }
+
+const Map = ({ pos, spaces, selectedSpace, mapFocusPos, onSelectSpace }) => (
+  <MapContainer
+    style={{ width: '100%', height: '100%' }}
+    center={[pos.lat, pos.lon]}
+    zoom={13}
+    scrollWheelZoom
+  >
+    <TileLayer
+      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    />
+
+    <FlyTo pos={mapFocusPos ?? pos} />
+
+    <Marker position={[pos.lat, pos.lon]} icon={userIcon}>
+      <Popup>You are here</Popup>
+    </Marker>
+
+    {spaces?.map((space) => (
+      <Marker
+        key={space.id}
+        position={[space.lat, space.lon]}
+        icon={selectedSpace?.id === space.id ? selectedIcon : spaceIcon}
+        eventHandlers={{ click: () => onSelectSpace(space) }}
+      >
+        <Popup>{space.name}</Popup>
+      </Marker>
+    ))}
+  </MapContainer>
+)
+
 export default Map

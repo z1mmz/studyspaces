@@ -1,42 +1,52 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs,addDoc } from 'firebase/firestore/lite';
+import { supabase } from './supabaseClient'
 
-const firebaseConfig = JSON.parse(import.meta.env.VITE_FIREBASE);
+const getSpaces = async () => {
+  const { data, error } = await supabase
+    .from('spaces')
+    .select('*, reviews(rating)')
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data ?? []
+}
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const getSpace = async (id) => {
+  const { data, error } = await supabase
+    .from('spaces')
+    .select('*, reviews(*)')
+    .eq('id', id)
+    .single()
+  if (error) throw error
+  return data
+}
 
 const addSpace = async (space) => {
-    console.log(space)
-    try {
-          const docRef = await addDoc(collection(db, "spaces"), {
-            Name: space.Name,
-            Lat: space.Lat,
-            Lon: space.Lon
-          });
-          console.log("Document written with ID: ", docRef.id);
-        } catch (e) {
-          console.error("Error adding document: ", e);
-        }
+  const { data, error } = await supabase
+    .from('spaces')
+    .insert([space])
+    .select()
+    .single()
+  if (error) throw error
+  return data
 }
 
-
-const getSpaces = async (Lat,Lon) => {
-  console.log()
-  const querySnapshot = await getDocs(collection(db, "spaces"));
-
-  // querySnapshot.forEach((doc) => {
-  //   // doc.data() is never undefined for query doc snapshots
-  //   console.log(doc.id, " => ", doc.data());
-  // });
-
-  return(querySnapshot.docs)
+const searchSpaces = async (query) => {
+  const { data, error } = await supabase
+    .from('spaces')
+    .select('*, reviews(rating)')
+    .or(`name.ilike.%${query}%,address.ilike.%${query}%,description.ilike.%${query}%`)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data ?? []
 }
 
-
-export default {
-    addSpace,
-    getSpaces
+const addReview = async (review) => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .insert([review])
+    .select()
+    .single()
+  if (error) throw error
+  return data
 }
+
+export default { getSpaces, getSpace, addSpace, searchSpaces, addReview }
